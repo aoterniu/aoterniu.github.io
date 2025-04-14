@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>aoterniu 个人博客</title><link>https://aoterniu.github.io</link><description>aoterniu 个人博客</description><copyright>aoterniu 个人博客</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/207451910?v=4</url><title>avatar</title><link>https://aoterniu.github.io</link></image><lastBuildDate>Mon, 14 Apr 2025 10:56:23 +0000</lastBuildDate><managingEditor>aoterniu 个人博客</managingEditor><ttl>60</ttl><webMaster>aoterniu 个人博客</webMaster><item><title>Windows 网络高级配置</title><link>https://aoterniu.github.io/post/Windows%20-wang-luo-gao-ji-pei-zhi.html</link><description># Windows 网络高级配置指南
+# Windows 网络高级配置指南
 
 ## 一、调整 IPv4/IPv6 优先级
 ### 修改注册表使 IPv4 优先
@@ -67,4 +66,3 @@ shutdown /r /t 0
 | 0x20   | IPv4优先（兼容模式）  | ★★★★★   |
 | 0xFF   | 完全禁用IPv6          | ★★☆☆☆   |
 
-。</description><guid isPermaLink="true">https://aoterniu.github.io/post/Windows%20-wang-luo-gao-ji-pei-zhi.html</guid><pubDate>Mon, 14 Apr 2025 10:20:00 +0000</pubDate></item></channel></rss>
