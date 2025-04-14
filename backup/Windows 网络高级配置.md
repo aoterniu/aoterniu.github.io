@@ -66,3 +66,86 @@ shutdown /r /t 0
 | 0x20   | IPv4优先（兼容模式）  | ★★★★★   |
 | 0xFF   | 完全禁用IPv6          | ★★☆☆☆   |
 
+
+# Windows 网络高级配置指南
+
+---
+
+## 二、锁定 ARP 静态表
+### 防止 ARP 缓存被修改
+
+1. **定位注册表路径**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters
+   ```
+
+2. **修改 ARP 重试次数**：
+   ```reg
+   ; 注册表项配置
+   项名称：ArpRetryCount
+   类型：DWORD (32位)
+   值数据：0
+   ```
+   - **效果**：ARP 缓存表将拒绝自动更新
+   - **风险提示**：可能导致合法设备无法动态接入网络
+
+---
+
+## 三、手动配置 DNS-over-HTTPS (DoH)
+### 自定义安全 DNS 服务器
+
+1. **创建 DNS 策略键**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Dns
+   ```
+   > 如路径不存在：右键 `Windows` 文件夹 → 新建项 → 命名 `Dns`
+
+2. **添加 DoH 服务器地址**：
+   ```reg
+   ; 新建字符串值
+   右键空白处 → 新建 → 字符串值 → 命名 DoHServers
+   ```
+
+3. **输入服务器地址**：
+   ```txt
+   # Cloudflare (推荐)
+   https://dns.cloudflare.com/dns-query
+
+   # Google
+   https://dns.google/dns-query
+
+   # 自定义服务器
+   https://your-doh-server/dns-query
+   ```
+
+4. **生效配置**：
+   ```powershell
+   # 强制刷新 DNS
+   ipconfig /flushdns
+   # 重启系统
+   shutdown /r /t 5
+   ```
+
+---
+
+### ⚠️ 通用注意事项
+| 类别        | 重要提醒                                  |
+|-------------|-----------------------------------------|
+| 权限要求    | 所有操作需使用 **管理员账户**            |
+| 系统兼容性  | 适用于 Windows 10 20H1+ / Windows 11    |
+| 风险控制    | 建议先通过 `文件 → 导出` 备份注册表      |
+| 回滚操作    | 删除添加的注册表项即可恢复默认设置       |
+
+### 推荐参数组合
+```reg
+; 最佳安全配置方案
+DisabledComponents = 0x20  (IPv4优先)
+ArpRetryCount      = 0     (锁定ARP)
+DoHServers         = https://dns.cloudflare.com/dns-query
+```
+
+---
+
+**效果预览**：  
+![GitHub Markdown 渲染效果](https://via.placeholder.com/800x400.png/000/fff?text=Optimized+for+GitHub+Issues)
+

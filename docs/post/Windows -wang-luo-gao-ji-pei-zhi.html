@@ -78,6 +78,89 @@ shutdown /r /t 0
 | 0x20   | IPv4优先（兼容模式）  | ★★★★★   |
 | 0xFF   | 完全禁用IPv6          | ★★☆☆☆   |
 
+
+# Windows 网络高级配置指南
+
+---
+
+## 二、锁定 ARP 静态表
+### 防止 ARP 缓存被修改
+
+1. **定位注册表路径**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters
+   ```
+
+2. **修改 ARP 重试次数**：
+   ```reg
+   ; 注册表项配置
+   项名称：ArpRetryCount
+   类型：DWORD (32位)
+   值数据：0
+   ```
+   - **效果**：ARP 缓存表将拒绝自动更新
+   - **风险提示**：可能导致合法设备无法动态接入网络
+
+---
+
+## 三、手动配置 DNS-over-HTTPS (DoH)
+### 自定义安全 DNS 服务器
+
+1. **创建 DNS 策略键**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Dns
+   ```
+   > 如路径不存在：右键 `Windows` 文件夹 → 新建项 → 命名 `Dns`
+
+2. **添加 DoH 服务器地址**：
+   ```reg
+   ; 新建字符串值
+   右键空白处 → 新建 → 字符串值 → 命名 DoHServers
+   ```
+
+3. **输入服务器地址**：
+   ```txt
+   # Cloudflare (推荐)
+   https://dns.cloudflare.com/dns-query
+
+   # Google
+   https://dns.google/dns-query
+
+   # 自定义服务器
+   https://your-doh-server/dns-query
+   ```
+
+4. **生效配置**：
+   ```powershell
+   # 强制刷新 DNS
+   ipconfig /flushdns
+   # 重启系统
+   shutdown /r /t 5
+   ```
+
+---
+
+### ⚠️ 通用注意事项
+| 类别        | 重要提醒                                  |
+|-------------|-----------------------------------------|
+| 权限要求    | 所有操作需使用 **管理员账户**            |
+| 系统兼容性  | 适用于 Windows 10 20H1+ / Windows 11    |
+| 风险控制    | 建议先通过 `文件 → 导出` 备份注册表      |
+| 回滚操作    | 删除添加的注册表项即可恢复默认设置       |
+
+### 推荐参数组合
+```reg
+; 最佳安全配置方案
+DisabledComponents = 0x20  (IPv4优先)
+ArpRetryCount      = 0     (锁定ARP)
+DoHServers         = https://dns.cloudflare.com/dns-query
+```
+
+---
+
+**效果预览**：  
+![GitHub Markdown 渲染效果](https://via.placeholder.com/800x400.png/000/fff?text=Optimized+for+GitHub+Issues)
+
 。">
 <meta property="og:title" content="Windows 网络高级配置">
 <meta property="og:description" content="# Windows 网络高级配置指南
@@ -147,6 +230,89 @@ shutdown /r /t 0
 |--------|-----------------------|----------|
 | 0x20   | IPv4优先（兼容模式）  | ★★★★★   |
 | 0xFF   | 完全禁用IPv6          | ★★☆☆☆   |
+
+
+# Windows 网络高级配置指南
+
+---
+
+## 二、锁定 ARP 静态表
+### 防止 ARP 缓存被修改
+
+1. **定位注册表路径**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters
+   ```
+
+2. **修改 ARP 重试次数**：
+   ```reg
+   ; 注册表项配置
+   项名称：ArpRetryCount
+   类型：DWORD (32位)
+   值数据：0
+   ```
+   - **效果**：ARP 缓存表将拒绝自动更新
+   - **风险提示**：可能导致合法设备无法动态接入网络
+
+---
+
+## 三、手动配置 DNS-over-HTTPS (DoH)
+### 自定义安全 DNS 服务器
+
+1. **创建 DNS 策略键**：
+   ```reg
+   HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Dns
+   ```
+   > 如路径不存在：右键 `Windows` 文件夹 → 新建项 → 命名 `Dns`
+
+2. **添加 DoH 服务器地址**：
+   ```reg
+   ; 新建字符串值
+   右键空白处 → 新建 → 字符串值 → 命名 DoHServers
+   ```
+
+3. **输入服务器地址**：
+   ```txt
+   # Cloudflare (推荐)
+   https://dns.cloudflare.com/dns-query
+
+   # Google
+   https://dns.google/dns-query
+
+   # 自定义服务器
+   https://your-doh-server/dns-query
+   ```
+
+4. **生效配置**：
+   ```powershell
+   # 强制刷新 DNS
+   ipconfig /flushdns
+   # 重启系统
+   shutdown /r /t 5
+   ```
+
+---
+
+### ⚠️ 通用注意事项
+| 类别        | 重要提醒                                  |
+|-------------|-----------------------------------------|
+| 权限要求    | 所有操作需使用 **管理员账户**            |
+| 系统兼容性  | 适用于 Windows 10 20H1+ / Windows 11    |
+| 风险控制    | 建议先通过 `文件 → 导出` 备份注册表      |
+| 回滚操作    | 删除添加的注册表项即可恢复默认设置       |
+
+### 推荐参数组合
+```reg
+; 最佳安全配置方案
+DisabledComponents = 0x20  (IPv4优先)
+ArpRetryCount      = 0     (锁定ARP)
+DoHServers         = https://dns.cloudflare.com/dns-query
+```
+
+---
+
+**效果预览**：  
+![GitHub Markdown 渲染效果](https://via.placeholder.com/800x400.png/000/fff?text=Optimized+for+GitHub+Issues)
 
 。">
 <meta property="og:type" content="article">
@@ -303,7 +469,99 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <td>★★☆☆☆</td>
 </tr>
 </tbody>
-</table></markdown-accessiblity-table></div>
+</table></markdown-accessiblity-table>
+<h1>Windows 网络高级配置指南</h1>
+<hr>
+<h2>二、锁定 ARP 静态表</h2>
+<h3>防止 ARP 缓存被修改</h3>
+<ol>
+<li>
+<p><strong>定位注册表路径</strong>：</p>
+<div class="highlight highlight-source-reg"><pre class="notranslate">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters</pre></div>
+</li>
+<li>
+<p><strong>修改 ARP 重试次数</strong>：</p>
+<div class="highlight highlight-source-reg"><pre class="notranslate"><span class="pl-c">; 注册表项配置</span>
+项名称：ArpRetryCount
+类型：DWORD (32位)
+值数据：0</pre></div>
+<ul>
+<li><strong>效果</strong>：ARP 缓存表将拒绝自动更新</li>
+<li><strong>风险提示</strong>：可能导致合法设备无法动态接入网络</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>三、手动配置 DNS-over-HTTPS (DoH)</h2>
+<h3>自定义安全 DNS 服务器</h3>
+<ol>
+<li>
+<p><strong>创建 DNS 策略键</strong>：</p>
+<div class="highlight highlight-source-reg"><pre class="notranslate">HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Dns</pre></div>
+<blockquote>
+<p>如路径不存在：右键 <code class="notranslate">Windows</code> 文件夹 → 新建项 → 命名 <code class="notranslate">Dns</code></p>
+</blockquote>
+</li>
+<li>
+<p><strong>添加 DoH 服务器地址</strong>：</p>
+<div class="highlight highlight-source-reg"><pre class="notranslate"><span class="pl-c">; 新建字符串值</span>
+右键空白处 → 新建 → 字符串值 → 命名 DoHServers</pre></div>
+</li>
+<li>
+<p><strong>输入服务器地址</strong>：</p>
+<div class="highlight highlight-text-adblock"><pre class="notranslate"><span class="pl-c"># Cloudflare (推荐)</span>
+https://dns.cloudflare.com/dns-query
+
+<span class="pl-c"># Google</span>
+https://dns.google/dns-query
+
+<span class="pl-c"># 自定义服务器</span>
+https://your-doh-server/dns-query</pre></div>
+</li>
+<li>
+<p><strong>生效配置</strong>：</p>
+<div class="highlight highlight-source-powershell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 强制刷新 DNS</span>
+ipconfig <span class="pl-k">/</span>flushdns
+<span class="pl-c"><span class="pl-c">#</span> 重启系统</span>
+shutdown <span class="pl-k">/</span>r <span class="pl-k">/</span>t <span class="pl-c1">5</span></pre></div>
+</li>
+</ol>
+<hr>
+<h3><g-emoji class="g-emoji" alias="warning">⚠️</g-emoji> 通用注意事项</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>类别</th>
+<th>重要提醒</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>权限要求</td>
+<td>所有操作需使用 <strong>管理员账户</strong></td>
+</tr>
+<tr>
+<td>系统兼容性</td>
+<td>适用于 Windows 10 20H1+ / Windows 11</td>
+</tr>
+<tr>
+<td>风险控制</td>
+<td>建议先通过 <code class="notranslate">文件 → 导出</code> 备份注册表</td>
+</tr>
+<tr>
+<td>回滚操作</td>
+<td>删除添加的注册表项即可恢复默认设置</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>推荐参数组合</h3>
+<div class="highlight highlight-source-reg"><pre class="notranslate"><span class="pl-c">; 最佳安全配置方案</span>
+DisabledComponents = 0x20  (IPv4优先)
+ArpRetryCount      = 0     (锁定ARP)
+DoHServers         = https://dns.cloudflare.com/dns-query</pre></div>
+<hr>
+<p><strong>效果预览</strong>：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5d3d651fb86a052f7250a9dd3ff051636256d25897532bb7f56c7332cf0f71a5/68747470733a2f2f7669612e706c616365686f6c6465722e636f6d2f383030783430302e706e672f3030302f6666663f746578743d4f7074696d697a65642b666f722b4769744875622b497373756573"><img src="https://camo.githubusercontent.com/5d3d651fb86a052f7250a9dd3ff051636256d25897532bb7f56c7332cf0f71a5/68747470733a2f2f7669612e706c616365686f6c6465722e636f6d2f383030783430302e706e672f3030302f6666663f746578743d4f7074696d697a65642b666f722b4769744875622b497373756573" alt="GitHub Markdown 渲染效果" data-canonical-src="https://via.placeholder.com/800x400.png/000/fff?text=Optimized+for+GitHub+Issues" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
