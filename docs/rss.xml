@@ -1,5 +1,119 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>aoterniu 个人博客</title><link>https://aoterniu.github.io</link><description>aoterniu 个人博客</description><copyright>aoterniu 个人博客</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/207451910?v=4</url><title>avatar</title><link>https://aoterniu.github.io</link></image><lastBuildDate>Wed, 16 Apr 2025 10:12:24 +0000</lastBuildDate><managingEditor>aoterniu 个人博客</managingEditor><ttl>60</ttl><webMaster>aoterniu 个人博客</webMaster><item><title>飞牛系统下 php环境安装失败</title><link>https://aoterniu.github.io/post/fei-niu-xi-tong-xia-%20php-huan-jing-an-zhuang-shi-bai.html</link><description># 一条命令解决飞牛OS下1Panel安装PHP环境失败的问题
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>aoterniu 个人博客</title><link>https://aoterniu.github.io</link><description>aoterniu 个人博客</description><copyright>aoterniu 个人博客</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/207451910?v=4</url><title>avatar</title><link>https://aoterniu.github.io</link></image><lastBuildDate>Wed, 16 Apr 2025 10:37:24 +0000</lastBuildDate><managingEditor>aoterniu 个人博客</managingEditor><ttl>60</ttl><webMaster>aoterniu 个人博客</webMaster><item><title>飞牛OS开启IOMMU硬件直通</title><link>https://aoterniu.github.io/post/fei-niu-OS-kai-qi-IOMMU-ying-jian-zhi-tong.html</link><description># 飞牛OS开启IOMMU硬件直通完整指南
+
+## 🔧 前置准备
+### 开启SSH远程访问
+1. **打开MobaXterm**  
+   - 点击 `Session` → `SSH`
+2. **配置连接参数**  
+   ```bash
+   # 连接参数示例
+   Host     : 192.168.1.100  # 飞牛OS管理IP
+   Port     : 22
+   Username : root           # 默认管理员账户
+   ```
+
+---
+
+## 🖥️ 核心配置流程
+### 修改GRUB引导配置
+```bash
+sudo nano /etc/default/grub
+```
+
+#### 处理器类型配置
+&lt;table&gt;
+&lt;tr&gt;
+&lt;th&gt;Intel平台&lt;/th&gt;
+&lt;th&gt;AMD平台&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+
+```bash
+GRUB_CMDLINE_LINUX_DEFAULT='quiet i915.force_probe=7d55 intel_iommu=on iommu=pt'
+```
+&lt;/td&gt;
+&lt;td&gt;
+
+```bash
+GRUB_CMDLINE_LINUX_DEFAULT='quiet i915.force_probe=7d55 amd_iommu=on iommu=pt'
+```
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+#### 操作说明
+1. 使用 `Ctrl+W` 搜索原配置行
+2. 按处理器类型修改参数
+3. 保存退出：`Ctrl+S` → `Ctrl+X`
+
+---
+
+### 应用配置更新
+```bash
+# 更新GRUB配置
+sudo update-grub
+
+# 重建initramfs
+sudo update-initramfs -u -k all
+
+# 重启系统
+sudo reboot
+```
+
+#### 预期成功输出
+```bash
+update-initramfs: Generating /boot/initrd.img-5.15.0-101-generic
+Warning: No support for locale: zh_CN.utf8
+```
+
+---
+
+## ✅ 验证IOMMU状态
+### 检查内核日志
+```bash
+dmesg | grep -i iommu
+```
+
+#### 成功标志
+```bash
+[    0.000000] DMAR: IOMMU enabled
+[    0.598712] iommu: Default domain type: Translated 
+```
+
+---
+
+## ⚠️ 注意事项
+&lt;details&gt;
+&lt;summary&gt;点击查看风险提示&lt;/summary&gt;
+
+1. **硬件兼容性**  
+   ```bash
+   # 检查CPU虚拟化支持
+   grep -E 'vmx|svm' /proc/cpuinfo
+   ```
+   - Intel需输出 `vmx`，AMD需输出 `svm`
+
+2. **回滚方案**  
+   ```bash
+   # 恢复原始配置
+   sudo nano /etc/default/grub → 删除iommu参数
+   sudo update-grub
+   sudo reboot
+   ```
+
+3. **日志监控**  
+   ```bash
+   journalctl -b -0 | grep -i dmar
+   ```
+&lt;/details&gt;
+
+---
+
+## 🖼️ 效果预览
+![配置流程图](https://via.placeholder.com/800x400.png/000/fff?text=IOMMU+Configuration+Flow)
+。</description><guid isPermaLink="true">https://aoterniu.github.io/post/fei-niu-OS-kai-qi-IOMMU-ying-jian-zhi-tong.html</guid><pubDate>Wed, 16 Apr 2025 10:36:58 +0000</pubDate></item><item><title>飞牛系统下 php环境安装失败</title><link>https://aoterniu.github.io/post/fei-niu-xi-tong-xia-%20php-huan-jing-an-zhuang-shi-bai.html</link><description># 一条命令解决飞牛OS下1Panel安装PHP环境失败的问题
 
 ```bash
 sudo apt install docker-compose --allow-change-held-packages -y
